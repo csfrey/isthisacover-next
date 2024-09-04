@@ -9,6 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 export function parseTrack(rawTrack: any): Track {
   return {
     spotifyID: rawTrack.id,
+    spotifyLink: rawTrack.external_urls.spotify,
     name: rawTrack.name,
     album: rawTrack.album.name,
     artist: rawTrack.artists.map((artist: any) => artist.name).join(", "),
