@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <QueryContext>
-          <main className="min-h-screen flex justify-center dark:bg-gray-950 dark:text-white">
+          <main className="min-h-screen flex justify-center dark:bg-gray-900 dark:text-white">
             {children}
           </main>
         </QueryContext>
