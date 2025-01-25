@@ -1,6 +1,6 @@
 "use client";
 
-import { parseTrack } from "@/lib/utils";
+// import { parseTrack } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
@@ -13,14 +13,6 @@ import { motion } from "framer-motion";
 const TrackView = () => {
   const { id } = useParams();
 
-  const trackQuery = useQuery({
-    queryKey: ["Track", id],
-    queryFn: async () => {
-      const response = await axios.get(`/api/track/${id}`);
-      return response.data;
-    },
-  });
-
   const determinationQuery = useQuery({
     queryKey: ["Determination", id],
     queryFn: async () => {
@@ -30,14 +22,20 @@ const TrackView = () => {
   });
 
   const track = useMemo(
-    () => (trackQuery.data ? parseTrack(trackQuery.data) : null),
-    [trackQuery.data]
+    () => (determinationQuery.data ? determinationQuery.data.track : null),
+    [determinationQuery.data]
+  );
+
+  const determination = useMemo(
+    () =>
+      determinationQuery.data ? determinationQuery.data.determination : null,
+    [determinationQuery.data]
   );
 
   const abbreviatedTrackName = useMemo(() => {
     if (!!track) {
       if (track.name.length > 32) {
-        return track.name.substring(0, 32) + "...";
+        return track.name.substring(0, 20) + "...";
       }
       return track.name;
     }
@@ -47,7 +45,7 @@ const TrackView = () => {
 
   return (
     <div className="h-full flex flex-col p-4 max-w-[500px] mx-auto">
-      {trackQuery.isPending || determinationQuery.isPending ? (
+      {determinationQuery.isPending ? (
         <div className="mt-24">
           <div className="text-center text-3xl mb-10">Analyzing</div>
           <div className="flex justify-center">
@@ -91,9 +89,7 @@ const TrackView = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              {determinationQuery.data?.isCover
-                ? "is a cover"
-                : "is not a cover"}
+              {determination.isCover ? "is a cover" : "is not a cover"}
             </motion.div>
           </div>
 

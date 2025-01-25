@@ -8,9 +8,11 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  console.log("--> getting track info");
   const spotifyTrackResult = await spotifyClient.tracks.get(params.id);
   const track = parseTrack(spotifyTrackResult);
 
+  console.log("--> checking db");
   // First, check the DB to see if we've made a determination for the track already
   let determination: Determination | null;
   const client = await pool.connect();
@@ -28,12 +30,14 @@ export async function GET(
   }
 
   if (determination) {
+    console.log("--> nothing found in the db ");
     return Response.json({
       track,
       determination,
     });
   }
 
+  console.log("--> asking chatgpt");
   // Second, if no determination has been made, ask the AI to make a guess
   if (!isInitialized) {
     await init();
@@ -74,6 +78,9 @@ export async function GET(
     return Response.error();
   }
 
+  console.log(`--> chatgpt says: ${guess}`);
+
+  console.log("--> storing new determination");
   // Third, store the AI's guess in the DB
   let newDetermination: Determination;
   try {
@@ -93,6 +100,7 @@ export async function GET(
     return Response.error();
   }
 
+  console.log("--> done");
   // Finally, return the track info and the guess
   return Response.json({
     track,
