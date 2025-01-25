@@ -6,5 +6,7 @@ export async function GET(
 ) {
   const result = await spotifyClient.tracks.get(params.id);
 
+  console.log(result);
+
   return Response.json(result);
 }

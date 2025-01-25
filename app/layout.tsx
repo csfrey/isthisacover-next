@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import QueryContext from "./context/QueryContext";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,8 +20,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <QueryContext>
-          <main className="min-h-screen flex justify-center dark:bg-gray-900 dark:text-white">
-            {children}
+          <main className="h-screen w-screen flex flex-col bg-gradient-to-b from-gray-800 to-gray-950 text-white">
+            <header className="p-4 flex justify-center">
+              <Link href="/" className="flex">
+                <div className="text-3xl mr-1">IsThisACover?</div>
+                <div>beta</div>
+              </Link>
+            </header>
+            <div className="grow overflow-y-scroll">{children}</div>
           </main>
         </QueryContext>
       </body>

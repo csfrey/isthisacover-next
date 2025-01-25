@@ -6,3 +6,10 @@ export type Track = {
   artist: string;
   imageUrl: string;
 };
+
+export type Determination = {
+  id: number;
+  spotify_id: string;
+  isCover: boolean;
+  gptIsCover: boolean;
+};

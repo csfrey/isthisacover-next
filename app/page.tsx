@@ -49,77 +49,87 @@ export default function Home() {
   }
 
   return (
-    <div className="mt-40 lg:w-[500px] sm:w-full sm:mx-4">
-      <div className="text-center text-3xl mb-2">Is this a cover?</div>
-      <div className="flex items-center">
-        <Popover open={open} onOpenChange={setOpen}>
-          <Command shouldFilter={false}>
-            <PopoverAnchor asChild>
-              <CommandPrimitive.Input
-                asChild
-                value={search}
-                onValueChange={setSearch}
-                onKeyDown={(e) => setOpen(e.key !== "Escape")}
-                onMouseDown={() => setOpen((open) => !!search || !open)}
-                onFocus={() => setOpen(true)}
-                onBlur={() => setOpen(false)}
-              >
-                <Input
-                  placeholder="Search for a song on Spotify..."
-                  className="dark:bg-gray-950 dark:text-white"
-                />
-              </CommandPrimitive.Input>
-            </PopoverAnchor>
+    <div className="h-full flex flex-col justify-evenly">
+      <div>
+        <div className="flex justify-center text-3xl mb-4">Search</div>
+        <div className="w-[90%] max-w-[500px] mx-auto">
+          <Popover open={open} onOpenChange={setOpen}>
+            <Command shouldFilter={false}>
+              <PopoverAnchor asChild>
+                <CommandPrimitive.Input
+                  className="box-border"
+                  asChild
+                  value={search}
+                  onValueChange={setSearch}
+                  onKeyDown={(e) => setOpen(e.key !== "Escape")}
+                  onMouseDown={() => setOpen((open) => !!search || !open)}
+                  onFocus={() => setOpen(true)}
+                  onBlur={() => setOpen(false)}
+                >
+                  <Input
+                    placeholder="Search for a song on Spotify..."
+                    className="dark:bg-gray-950 dark:text-white"
+                  />
+                </CommandPrimitive.Input>
+              </PopoverAnchor>
 
-            <PopoverContent
-              asChild
-              onOpenAutoFocus={(e) => e.preventDefault()}
-              onInteractOutside={(e) => {
-                if (
-                  e.target instanceof Element &&
-                  e.target.hasAttribute("cmdk-input")
-                ) {
-                  e.preventDefault();
-                }
-              }}
-              className="w-[--radix-popover-trigger-width] p-0"
-            >
-              <CommandList>
-                {isPending && (
-                  <CommandPrimitive.Loading>
-                    <div className="p-1">
-                      <Skeleton className="h-6 w-full" />
-                    </div>
-                  </CommandPrimitive.Loading>
-                )}
-                {!isPending && tracks?.length > 0
-                  ? tracks?.map((t) => (
-                      <CommandItem
-                        key={t.spotifyID}
-                        value={t.spotifyID}
-                        onMouseDown={(e) => e.preventDefault()}
-                        onSelect={onSelectItem}
-                      >
-                        <div className="flex gap-2">
-                          <img
-                            src={t.imageUrl}
-                            alt="album-art"
-                            className="h-20 w-20"
-                          />
-                          <div className="flex flex-col justify-center">
-                            <div>{t.artist}</div>
-                            <div className="text-2xl font-bold">{t.name}</div>
-                            <div className="text-xs italic">{t.album}</div>
+              <PopoverContent
+                asChild
+                onOpenAutoFocus={(e) => e.preventDefault()}
+                onInteractOutside={(e) => {
+                  if (
+                    e.target instanceof Element &&
+                    e.target.hasAttribute("cmdk-input")
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
+                className="w-[--radix-popover-trigger-width] p-0"
+              >
+                <CommandList>
+                  {isPending && (
+                    <CommandPrimitive.Loading>
+                      <div className="p-1">
+                        <Skeleton className="h-6 w-full" />
+                      </div>
+                    </CommandPrimitive.Loading>
+                  )}
+                  {!isPending && tracks?.length > 0
+                    ? tracks?.map((t) => (
+                        <CommandItem
+                          key={t.spotifyID}
+                          value={t.spotifyID}
+                          onMouseDown={(e) => e.preventDefault()}
+                          onSelect={onSelectItem}
+                        >
+                          <div className="flex gap-2">
+                            <img
+                              src={t.imageUrl}
+                              alt="album-art"
+                              className="h-20 w-20"
+                            />
+                            <div className="flex flex-col justify-center">
+                              <div>{t.artist}</div>
+                              <div className="text-2xl font-bold">{t.name}</div>
+                              <div className="text-xs italic">{t.album}</div>
+                            </div>
                           </div>
-                        </div>
-                      </CommandItem>
-                    ))
-                  : null}
-                {!isPending ? <CommandEmpty>{"No items."}</CommandEmpty> : null}
-              </CommandList>
-            </PopoverContent>
-          </Command>
-        </Popover>
+                        </CommandItem>
+                      ))
+                    : null}
+                  {!isPending ? (
+                    <CommandEmpty>{"No items."}</CommandEmpty>
+                  ) : null}
+                </CommandList>
+              </PopoverContent>
+            </Command>
+          </Popover>
+        </div>
+      </div>
+      <div className="max-w-[500px] mx-auto p-4 text-center mb-20">
+        IsThisACover uses OpenAI in combination with user votes to determine if
+        a song in Spotify's database is an original or a cover. Search for a
+        song to get started!
       </div>
     </div>
   );
