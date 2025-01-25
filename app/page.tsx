@@ -13,7 +13,7 @@ import {
 import { PopoverAnchor } from "@radix-ui/react-popover";
 import { Command as CommandPrimitive } from "cmdk";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { parseTrack } from "@/lib/utils";
 import { Track } from "@/lib/types";

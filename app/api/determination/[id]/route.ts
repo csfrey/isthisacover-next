@@ -30,14 +30,14 @@ export async function GET(
   }
 
   if (determination) {
-    console.log("--> nothing found in the db ");
+    console.log("--> found it in the db ");
     return Response.json({
       track,
       determination,
     });
   }
 
-  console.log("--> asking chatgpt");
+  console.log("--> not in the db, asking chatgpt");
   // Second, if no determination has been made, ask the AI to make a guess
   if (!isInitialized) {
     await init();

@@ -1,7 +1,7 @@
 "use client";
 
 // import { parseTrack } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -9,6 +9,11 @@ import { useMemo } from "react";
 import { ScaleLoader } from "react-spinners";
 import { LuThumbsDown, LuThumbsUp } from "react-icons/lu";
 import { motion } from "framer-motion";
+import { Determination, Track } from "@/lib/types";
+
+const TrackName = ({ track }: { track: Track }) => {
+  return <div></div>;
+};
 
 const TrackView = () => {
   const { id } = useParams();
@@ -21,12 +26,23 @@ const TrackView = () => {
     },
   });
 
-  const track = useMemo(
+  const vote = useMutation({
+    mutationKey: ["VoteMutation"],
+    mutationFn: (isCover: boolean) => {
+      return axios.post("/vote", {
+        isCover,
+        isCorrection: isCover !== determination.isCover,
+        spotifyID: track.spotifyID,
+      });
+    },
+  });
+
+  const track: Track = useMemo(
     () => (determinationQuery.data ? determinationQuery.data.track : null),
     [determinationQuery.data]
   );
 
-  const determination = useMemo(
+  const determination: Determination = useMemo(
     () =>
       determinationQuery.data ? determinationQuery.data.determination : null,
     [determinationQuery.data]
@@ -64,8 +80,8 @@ const TrackView = () => {
               <div className="col-span-2">
                 <img src={track?.imageUrl || ""} alt="album art" />
               </div>
-              <div className="col-span-3 flex flex-col justify-center">
-                <div className="font-bold">{abbreviatedTrackName}</div>
+              <div className="col-span-3 flex flex-col justify-center overflow-x-hidden">
+                <div className="font-bold text-nowrap">{track?.name}</div>
                 <div className="font-thin">{track?.artist}</div>
               </div>
               <div className="col-span-1">
@@ -101,18 +117,20 @@ const TrackView = () => {
             <div className="text-center mt-16">
               Did we get it right? Vote below!
             </div>
-            <div className="text-center text-lg mt-10">
-              <i>Is</i> <strong>{track?.name}</strong> <i>by</i>{" "}
-              <strong>{track?.artist}</strong> <i>a cover?</i>
-            </div>
-            <div className="flex justify-center space-x-8 mt-6 text-4xl">
-              <div className="rounded-full p-4 hover:bg-slate-500 hover:bg-opacity-50">
-                <LuThumbsUp />
+            <>
+              <div className="text-center text-lg mt-10">
+                <i>Is</i> <strong>{track?.name}</strong> <i>by</i>{" "}
+                <strong>{track?.artist}</strong> <i>a cover?</i>
               </div>
-              <div className="rounded-full p-4 hover:bg-slate-500 hover:bg-opacity-50">
-                <LuThumbsDown />
+              <div className="flex justify-center space-x-8 mt-6 mb-12 text-4xl">
+                <div className="rounded-full p-4 hover:bg-slate-500 hover:bg-opacity-50">
+                  <LuThumbsUp />
+                </div>
+                <div className="rounded-full p-4 hover:bg-slate-500 hover:bg-opacity-50">
+                  <LuThumbsDown />
+                </div>
               </div>
-            </div>
+            </>
           </motion.div>
         </section>
       )}
