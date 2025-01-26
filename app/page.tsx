@@ -128,8 +128,8 @@ export default function Home() {
       </div>
       <div className="max-w-[500px] mx-auto p-4 text-center mb-20">
         IsThisACover uses OpenAI in combination with user votes to determine if
-        a song in Spotify's database is an original or a cover. Search for a
-        song to get started!
+        a song in Spotify&apos;s database is an original or a cover. Search for
+        a song to get started!
       </div>
     </div>
   );
