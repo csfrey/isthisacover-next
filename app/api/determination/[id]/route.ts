@@ -32,13 +32,15 @@ export async function GET(
         "--> found a determination in the db, comparing with user votes"
       );
 
+      // check with user votes
       const votesResult = await client.query<Vote>(
         "SELECT * FROM Votes WHERE spotifyid = $1",
         [track.spotifyid]
       );
       const votes = votesResult.rows;
+      console.log(`--> Found ${votes.length} votes`);
 
-      if (votes.length > MIN_VOTES) {
+      if (votes.length >= MIN_VOTES) {
         let yesVotes = 0;
         let noVotes = 0;
 
@@ -53,11 +55,12 @@ export async function GET(
         });
 
         const isCoverByVotes = yesVotes > noVotes;
+        console.log(`--> survey says: iscover = ${isCoverByVotes}`);
 
         // update the determination if it should be changed based on the votes
         if (isCoverByVotes !== determination.iscover) {
           const updateDeterminationResult = await client.query<Determination>(
-            "UPDATE Determinations SET iscover = $1 WHERE spotifyid = $2",
+            "UPDATE Determinations SET iscover = $1 WHERE spotifyid = $2 RETURNING *",
             [isCoverByVotes, track.spotifyid]
           );
           determination = updateDeterminationResult.rows[0];
