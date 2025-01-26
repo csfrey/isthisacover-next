@@ -119,7 +119,7 @@ const TrackView = () => {
             </div>
             {voted ? (
               <>
-                <div>Thanks for voting!</div>
+                <div className="text-center mt-10">Thanks for voting!</div>
               </>
             ) : (
               <>
