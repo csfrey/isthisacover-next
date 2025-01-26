@@ -32,7 +32,7 @@ const TrackView = () => {
       return axios.post("/api/vote", {
         spotifyid: track.spotifyid,
         iscover,
-        isCorrection: iscover !== determination.iscover,
+        iscorrection: iscover !== determination.iscover,
       });
     },
   });
@@ -87,7 +87,7 @@ const TrackView = () => {
               <div className="col-span-1">
                 {track?.spotifyid && (
                   <Link
-                    href={track?.spotifyLink || ""}
+                    href={track?.spotifylink || ""}
                     target="_blank"
                     className="h-8 w-8 float-right"
                   >

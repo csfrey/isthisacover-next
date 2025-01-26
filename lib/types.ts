@@ -1,6 +1,6 @@
 export type Track = {
   spotifyid: string;
-  spotifyLink?: string;
+  spotifylink?: string;
   name: string;
   album: string;
   artist: string;
@@ -16,5 +16,5 @@ export type Determination = {
 export type Vote = {
   spotifyid: string;
   iscover: boolean;
-  isCorrection: boolean;
+  iscorrection: boolean;
 };
