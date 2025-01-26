@@ -79,7 +79,7 @@ Algo:
 ## How to keep users from voting mutliple times?
 
 - local storage / cookie?
-  - spotify track ID -> isCover
+  - spotify track ID -> iscover
   - users can clear this to vote again if they want
 - OAuth
   - make users log in before they can vote

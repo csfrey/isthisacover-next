@@ -43,9 +43,9 @@ export default function Home() {
     [data]
   );
 
-  function onSelectItem(spotifyID: string) {
+  function onSelectItem(spotifyid: string) {
     setOpen(false);
-    router.push(`/track/${spotifyID}`);
+    router.push(`/track/${spotifyid}`);
   }
 
   return (
@@ -97,8 +97,8 @@ export default function Home() {
                   {!isPending && tracks?.length > 0
                     ? tracks?.map((t) => (
                         <CommandItem
-                          key={t.spotifyID}
-                          value={t.spotifyID}
+                          key={t.spotifyid}
+                          value={t.spotifyid}
                           onMouseDown={(e) => e.preventDefault()}
                           onSelect={onSelectItem}
                         >

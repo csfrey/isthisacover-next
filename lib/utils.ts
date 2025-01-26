@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function parseTrack(rawTrack: any): Track {
   return {
-    spotifyID: rawTrack.id,
+    spotifyid: rawTrack.id,
     spotifyLink: rawTrack.external_urls.spotify,
     name: rawTrack.name,
     album: rawTrack.album.name,

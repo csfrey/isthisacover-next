@@ -1,5 +1,5 @@
 export type Track = {
-  spotifyID: string;
+  spotifyid: string;
   spotifyLink?: string;
   name: string;
   album: string;
@@ -8,8 +8,13 @@ export type Track = {
 };
 
 export type Determination = {
-  id: number;
-  spotify_id: string;
-  isCover: boolean;
-  gptIsCover: boolean;
+  spotifyid: string;
+  iscover: boolean;
+  gptiscover: boolean;
+};
+
+export type Vote = {
+  spotifyid: string;
+  iscover: boolean;
+  isCorrection: boolean;
 };

@@ -18,8 +18,8 @@ export async function GET(
   const client = await pool.connect();
   try {
     const result = await client.query<Determination>(
-      "SELECT * FROM Determinations WHERE spotify_id = $1",
-      [track.spotifyID]
+      "SELECT * FROM Determinations WHERE spotifyid = $1;",
+      [track.spotifyid]
     );
 
     determination = result.rows.length > 0 ? result.rows[0] : null;
@@ -86,8 +86,8 @@ export async function GET(
   try {
     const client = await pool.connect();
     const result = await client.query<Determination>(
-      "INSERT INTO Determinations (spotify_id, isCover, gptIsCover) VALUES ($1, $2, $3) RETURNING *;",
-      [track.spotifyID, guess.isCover, guess.isCover]
+      "INSERT INTO Determinations (spotifyid, iscover, gptiscover) VALUES ($1, $2, $3) RETURNING *;",
+      [track.spotifyid, guess.iscover, guess.iscover]
     );
 
     if (result.rows.length <= 0) throw new Error();

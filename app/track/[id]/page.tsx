@@ -5,18 +5,16 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { ScaleLoader } from "react-spinners";
 import { LuThumbsDown, LuThumbsUp } from "react-icons/lu";
 import { motion } from "framer-motion";
 import { Determination, Track } from "@/lib/types";
-
-const TrackName = ({ track }: { track: Track }) => {
-  return <div></div>;
-};
+import { Button } from "@/components/ui/button";
 
 const TrackView = () => {
   const { id } = useParams();
+  const [voted, setVoted] = useState<boolean>(false);
 
   const determinationQuery = useQuery({
     queryKey: ["Determination", id],
@@ -28,11 +26,13 @@ const TrackView = () => {
 
   const vote = useMutation({
     mutationKey: ["VoteMutation"],
-    mutationFn: (isCover: boolean) => {
-      return axios.post("/vote", {
-        isCover,
-        isCorrection: isCover !== determination.isCover,
-        spotifyID: track.spotifyID,
+    mutationFn: (iscover: boolean) => {
+      setVoted(true);
+      console.log(determination);
+      return axios.post("/api/vote", {
+        spotifyid: track.spotifyid,
+        iscover,
+        isCorrection: iscover !== determination.iscover,
       });
     },
   });
@@ -48,16 +48,16 @@ const TrackView = () => {
     [determinationQuery.data]
   );
 
-  const abbreviatedTrackName = useMemo(() => {
-    if (!!track) {
-      if (track.name.length > 32) {
-        return track.name.substring(0, 20) + "...";
-      }
-      return track.name;
-    }
+  // const abbreviatedTrackName = useMemo(() => {
+  //   if (!!track) {
+  //     if (track.name.length > 32) {
+  //       return track.name.substring(0, 20) + "...";
+  //     }
+  //     return track.name;
+  //   }
 
-    return "";
-  }, [track]);
+  //   return "";
+  // }, [track]);
 
   return (
     <div className="h-full flex flex-col p-4 max-w-[500px] mx-auto">
@@ -85,7 +85,7 @@ const TrackView = () => {
                 <div className="font-thin">{track?.artist}</div>
               </div>
               <div className="col-span-1">
-                {track?.spotifyID && (
+                {track?.spotifyid && (
                   <Link
                     href={track?.spotifyLink || ""}
                     target="_blank"
@@ -105,7 +105,7 @@ const TrackView = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              {determination.isCover ? "is a cover" : "is not a cover"}
+              {determination.iscover ? "is a cover" : "is not a cover"}
             </motion.div>
           </div>
 
@@ -117,20 +117,34 @@ const TrackView = () => {
             <div className="text-center mt-16">
               Did we get it right? Vote below!
             </div>
-            <>
-              <div className="text-center text-lg mt-10">
-                <i>Is</i> <strong>{track?.name}</strong> <i>by</i>{" "}
-                <strong>{track?.artist}</strong> <i>a cover?</i>
-              </div>
-              <div className="flex justify-center space-x-8 mt-6 mb-12 text-4xl">
-                <div className="rounded-full p-4 hover:bg-slate-500 hover:bg-opacity-50">
-                  <LuThumbsUp />
+            {voted ? (
+              <>
+                <div>Thanks for voting!</div>
+              </>
+            ) : (
+              <>
+                <div className="text-center text-lg mt-10">
+                  <i>Is</i> <strong>{track?.name}</strong> <i>by</i>{" "}
+                  <strong>{track?.artist}</strong> <i>a cover?</i>
                 </div>
-                <div className="rounded-full p-4 hover:bg-slate-500 hover:bg-opacity-50">
-                  <LuThumbsDown />
+                <div className="flex justify-center gap-4 mt-6 mb-12">
+                  <Button
+                    className="w-32 bg-green-500 hover:bg-green-600"
+                    onClick={() => vote.mutate(true)}
+                  >
+                    <LuThumbsUp />
+                    Cover
+                  </Button>
+                  <Button
+                    className="w-32 bg-red-500 hover:bg-red-600"
+                    onClick={() => vote.mutate(false)}
+                  >
+                    <LuThumbsDown />
+                    Not a cover
+                  </Button>
                 </div>
-              </div>
-            </>
+              </>
+            )}
           </motion.div>
         </section>
       )}
