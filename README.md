@@ -1,36 +1,18 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Is This A Cover?
+View the live demo here --> https://isthisacover.vercel.app <--
 
-## Getting Started
+<img src="https://i.imgur.com/oUwiPYY.png" alt="Determination page" />
 
-First, run the development server:
+## Summary
+IsThisACover is a webapp written in Next.js that uses OpenAI to determine if a track in Spotify's library is a cover. After the AI has made a determination, users are able to vote on it, potentially changing the determination. The app is currently in a proof-of-concept state, but is nominally fully functional.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### AI-Generated Determinations
+Using AI to create initial determinations presents a number of challenges. The most obvious challenges are cost and potential errors. Currently I am happy to eat the cost of running the site since GPT 4o-mini is so cheap, but if the site ever gains traction, I intend to mitigate operating costs by running banner ads.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The error problem is the onus for implementing the voting system which I describe below.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Voting System
+In order to mitigate the fact that AI sometimes gets things wrong, I've implemented a rudimentary system for users to validate the AI-generated determinations through simple yes/no votes - "Yes this a cover" or "No, this is not a cover." The naive approach from there would be to use a simple majority after a certain threshold of votes. However, user behavior on the open internet is subject to [Cunningham's Law](https://en.wikipedia.org/wiki/Ward_Cunningham#:~:text="Cunningham%27s%20Law",-For%20the%20mathematical&text=Cunningham%20is%20credited%20with%20the,than%20to%20answer%20a%20question), which in this case means it is more likely that a user will vote in order to correct rather than confirm. For this reason, votes which seek to correct a determination are weighted slightly less than votes which confirm.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Mitigating Abuse
+In the current alpha version, there is nothing to stop a user from voting a virtually unlimited number of times on any one song, skewing the results. The risk is that I would need to manually clean up the database, possibly needing to delete multiple determinations that would then need to be reassessed by the AI. In the future I plan to mitigate this behavior and am currently researching option (if you have suggestions, please reach out to me at contact@charliefrey.io)
