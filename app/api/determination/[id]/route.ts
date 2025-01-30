@@ -2,7 +2,9 @@ import { spotifyClient } from "@/lib/spotify";
 import { openai, assistant, isInitialized, init } from "@/lib/openai";
 import { parseTrack } from "@/lib/utils";
 import { pool } from "@/lib/db";
-import { Determination } from "@/lib/types";
+import { Determination, Vote } from "@/lib/types";
+
+const MIN_VOTES = 10;
 
 export async function GET(
   request: Request,
@@ -14,28 +16,77 @@ export async function GET(
 
   console.log("--> checking db");
   // First, check the DB to see if we've made a determination for the track already
-  let determination: Determination | null;
+
   const client = await pool.connect();
   try {
-    const result = await client.query<Determination>(
+    const determinationResult = await client.query<Determination>(
       "SELECT * FROM Determinations WHERE spotifyid = $1;",
       [track.spotifyid]
     );
 
-    determination = result.rows.length > 0 ? result.rows[0] : null;
+    let determination =
+      determinationResult.rows.length > 0 ? determinationResult.rows[0] : null;
+
+    if (determination) {
+      console.log(
+        "--> found a determination in the db, comparing with user votes"
+      );
+
+      // check with user votes
+      const votesResult = await client.query<Vote>(
+        "SELECT * FROM Votes WHERE spotifyid = $1",
+        [track.spotifyid]
+      );
+      const votes = votesResult.rows;
+      console.log(`--> Found ${votes.length} votes`);
+
+      if (votes.length >= MIN_VOTES) {
+        let yesVotes = 0;
+        let noVotes = 0;
+
+        votes.forEach((vote) => {
+          let score = vote.iscorrection ? 0.9 : 1; // accounting for Cunningham's Law
+
+          if (vote.iscover) {
+            yesVotes += score;
+          } else {
+            noVotes += score;
+          }
+        });
+
+        const isCoverByVotes = yesVotes > noVotes;
+        console.log(`--> survey says: iscover = ${isCoverByVotes}`);
+
+        // update the determination if it should be changed based on the votes
+        if (isCoverByVotes !== determination.iscover) {
+          const updateDeterminationResult = await client.query<Determination>(
+            "UPDATE Determinations SET iscover = $1 WHERE spotifyid = $2 RETURNING *",
+            [isCoverByVotes, track.spotifyid]
+          );
+          determination = updateDeterminationResult.rows[0];
+        }
+      }
+
+      return Response.json({
+        track,
+        determination,
+      });
+    }
+
     client.release();
   } catch (error) {
     client.release();
     return Response.error();
   }
 
-  if (determination) {
-    console.log("--> found it in the db ");
-    return Response.json({
-      track,
-      determination,
-    });
-  }
+  // if (determination) {
+  //   console.log("--> found it in the db ");
+
+  //   return Response.json({
+  //     track,
+  //     determination,
+  //   });
+  // }
 
   console.log("--> not in the db, asking chatgpt");
   // Second, if no determination has been made, ask the AI to make a guess

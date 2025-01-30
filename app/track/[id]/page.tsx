@@ -32,7 +32,7 @@ const TrackView = () => {
       return axios.post("/api/vote", {
         spotifyid: track.spotifyid,
         iscover,
-        isCorrection: iscover !== determination.iscover,
+        iscorrection: iscover !== determination.iscover,
       });
     },
   });
@@ -47,17 +47,6 @@ const TrackView = () => {
       determinationQuery.data ? determinationQuery.data.determination : null,
     [determinationQuery.data]
   );
-
-  // const abbreviatedTrackName = useMemo(() => {
-  //   if (!!track) {
-  //     if (track.name.length > 32) {
-  //       return track.name.substring(0, 20) + "...";
-  //     }
-  //     return track.name;
-  //   }
-
-  //   return "";
-  // }, [track]);
 
   return (
     <div className="h-full flex flex-col p-4 max-w-[500px] mx-auto">
@@ -87,7 +76,7 @@ const TrackView = () => {
               <div className="col-span-1">
                 {track?.spotifyid && (
                   <Link
-                    href={track?.spotifyLink || ""}
+                    href={track?.spotifylink || ""}
                     target="_blank"
                     className="h-8 w-8 float-right"
                   >
@@ -129,14 +118,14 @@ const TrackView = () => {
                 </div>
                 <div className="flex justify-center gap-4 mt-6 mb-12">
                   <Button
-                    className="w-32 bg-green-500 hover:bg-green-600"
+                    className="w-32 border-2 border-gray-600 bg-opacity-0 hover:bg-opacity-100"
                     onClick={() => vote.mutate(true)}
                   >
                     <LuThumbsUp />
                     Cover
                   </Button>
                   <Button
-                    className="w-32 bg-red-500 hover:bg-red-600"
+                    className="w-32 border-2 border-gray-600 bg-opacity-0 hover:bg-opacity-100"
                     onClick={() => vote.mutate(false)}
                   >
                     <LuThumbsDown />

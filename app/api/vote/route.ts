@@ -1,5 +1,5 @@
 import { pool } from "@/lib/db";
-import { Vote } from "@/lib/types";
+import { Determination, Vote } from "@/lib/types";
 
 // get all
 export async function GET(request: Request) {
@@ -16,16 +16,18 @@ export async function GET(request: Request) {
 
 // post new
 export async function POST(request: Request) {
-  const vote: Vote = await request.json();
+  const newVote: Vote = await request.json();
   const client = await pool.connect();
 
   try {
-    const result = await client.query<Vote>(
-      "INSERT INTO Votes (spotifyid, iscover, isCorrection) VALUES ($1, $2, $3) RETURNING *;",
-      [vote.spotifyid, vote.iscover, vote.isCorrection]
+    // log the new vote
+    const voteResult = await client.query<Vote>(
+      "INSERT INTO Votes (spotifyid, iscover, iscorrection) VALUES ($1, $2, $3) RETURNING *;",
+      [newVote.spotifyid, newVote.iscover, newVote.iscorrection]
     );
+
     client.release();
-    return Response.json(result.rows[0]);
+    return Response.json(voteResult.rows[0]);
   } catch {
     client.release();
     return Response.error();
